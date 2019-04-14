@@ -166,10 +166,10 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Interfaces\IWeatherInfo.cs" />
     <Compile Include="Interfaces\IService.cs" />
     <Compile Include="Models\OpencagedataService.cs" />
     <Compile Include="Models\WeatherInfo.cs" />
+    <Compile Include="Models\WeatherManager.cs" />
     <Compile Include="Models\WeatherService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -270,7 +270,7 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>True</UseIIS>
+          <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>55642</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>

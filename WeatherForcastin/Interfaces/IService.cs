@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +9,8 @@ namespace WeatherForcastin.Interfaces
 {
     interface IService
     {
-        //IWeatherInfo GetWeatherInfo();
-        
+        string URL { get;}
+
+        JObject GetData();
     }
 }

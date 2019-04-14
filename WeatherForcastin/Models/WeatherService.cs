@@ -10,44 +10,74 @@ namespace WeatherForcastin.Models
 {
     public class WeatherService : IService
     {
+        #region Private fields
+
         private const string key = "107f8b7ce62a20bd55b9f1d787292031";
         private string lat;
-        private string ing;
+        private string lng;
 
-        public WeatherService(string lat, string ing)
+        #endregion
+
+        #region Public fields
+
+        public string URL
+        {
+            get { return $"https://api.darksky.net/forecast/{key}/{lat},{lng}"; }
+        }
+
+        #endregion
+
+        #region Constructor
+
+        public WeatherService(string lat, string lng)
         {
             this.lat = lat;
-            this.ing = ing;
+            this.lng = lng;
         }
 
-        public WeatherInfo GetWeatherInfo()
+        #endregion
+
+        #region Public methods
+
+        public double GetWeatherInfo()
         {
-            using (var webClient = new WebClient())
+            double tempreture = 0.0;
+            var json = GetData();
+            
+            if(json != null)
             {
-                 GetData(webClient);
+                tempreture = GetTempreture(json);
             }
 
-            return new WeatherInfo();
-        }
-
-        private void GetData(WebClient webClient)
-        {
-            string str;
-            var uri = GetURL();
-
-            webClient.QueryString.Add("format", "json");
-            str = webClient.DownloadString(uri);
-            JObject json = JObject.Parse(str);
-            //return GetCoordinates(json);
-
-
-        }
-
-        private string GetURL()
-        {
-            return $"https://api.darksky.net/forecast/{key}/{lat},{ing}";
+            return tempreture;
         }
 
         
+
+        public JObject GetData()
+        {
+            string str;
+            using (var webClient = new WebClient())
+            {                webClient.QueryString.Add("format", "json");
+                str = webClient.DownloadString(URL);
+                JObject json = JObject.Parse(str);
+                return json;
+            } 
+        }
+
+        #endregion
+
+        #region Private methods
+
+        private double GetTempreture(JObject json)
+        {
+            //parse json for getting the temperature
+            //leaving this parse function uncompleted           
+            
+            return 25.6;
+        }
+
+        #endregion
+
     }
 }

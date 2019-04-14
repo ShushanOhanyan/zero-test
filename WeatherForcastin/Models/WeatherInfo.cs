@@ -7,8 +7,7 @@ namespace WeatherForcastin.Models
 {
     public class WeatherInfo 
     {
-        public double Tempreture { get; set; }
-        
+        public double Temperature { get; set; }        
     }
     
 }

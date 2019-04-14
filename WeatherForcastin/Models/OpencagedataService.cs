@@ -4,54 +4,86 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Web;
+using WeatherForcastin.Interfaces;
 
 namespace WeatherForcastin.Models
 {
     public class OpencagedataService : IService
     {
-        private string key = "3ec6107ba5d14cdab5f18398d292d392";
-        private string space;
+        #region Private fields
 
-        public OpencagedataService(string space)
+        private string key = "3ec6107ba5d14cdab5f18398d292d392";
+        private string place;
+        private static Dictionary<string, Tuple<string, string>> cache = new Dictionary<string, Tuple<string, string>>();
+
+        #endregion
+
+        #region Public fields
+
+        public string URL
         {
-            this.space = space;
+            get { return $"https://api.opencagedata.com/geocode/v1/json?q={place}&key={key}"; }
         }
 
+        #endregion
+
+        #region Constructor
+
+        public OpencagedataService(string place)
+        {
+            this.place = place;
+        }
+
+        #endregion
+
+        #region Public Methods
         public Tuple<string, string> GetCoordinates()
         {
-            
-            
-            using (var webClient = new WebClient())
+            if (cache.ContainsKey(this.place))
             {
-                return GetData(webClient);
+                return cache[place];
             }
+
+            var json = GetData();
+            return GetCoordinates(json);
         }
 
-        private string GetURL()
-        {
-            return $"https://api.opencagedata.com/geocode/v1/json?q={space}&key={key}";
-        }
+       
 
-        private Tuple<string, string>  GetData(WebClient webClient)
+        public JObject GetData()
         {
             string str;
-            var uri = GetURL();
+            JObject json = new JObject();
 
-            webClient.QueryString.Add("format", "json");
-            str = webClient.DownloadString(uri);
-            JObject json = JObject.Parse(str);
-            return GetCoordinates(json);
+            using (var webClient = new WebClient())
+            {
+                webClient.QueryString.Add("format", "json");
+                str = webClient.DownloadString(URL);
+                json = JObject.Parse(str);                
+            }
 
-            
+            return json;
         }
 
+        #endregion
+
+        #region Private fields
         private Tuple<string, string> GetCoordinates(JObject json)
         {
-            json = (JObject)json["results"][0]["geometry"];
-            string lat = (string)json["lat"];
-            string ing = (string)json["lng"];
+            if (json["results"].Count() > 0)
+            {
+                json = (JObject)json["results"][0]["geometry"];
+                string lat = (string)json["lat"];
+                string lng = (string)json["lng"];
 
-            return new Tuple<string, string>(lat, ing);
+                var result = new Tuple<string, string>(lat, lng);
+                cache.Add(this.place, result);
+                return result;
+            }
+
+            return new Tuple<string, string>(string.Empty, string.Empty);
         }
+
+        #endregion
     }
 }

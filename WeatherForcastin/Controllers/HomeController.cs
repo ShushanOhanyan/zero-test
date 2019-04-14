@@ -12,23 +12,18 @@ namespace WeatherForcastin.Controllers
 {
     public class HomeController : Controller
     {
-        public ActionResult Index(string space)
+        public ActionResult Index(string place)
         {
-            space = "Armenia";
-             WeatherInfo result = new WeatherInfo() { Tempreture = 17 }; ;
-            if (!string.IsNullOrEmpty(space))
+            WeatherInfo info = new WeatherInfo();
+
+            if (!string.IsNullOrEmpty(place))
             {
-                OpencagedataService coordService = new OpencagedataService(space);
-                var coordinates = coordService.GetCoordinates();
+                WeatherManager weatherManager = new WeatherManager();
 
-
-                var weatherService = new  WeatherService(coordinates.Item1.ToString(), coordinates.Item2.ToString());
-
-               var a = weatherService.GetWeatherInfo();
-
+                 info = weatherManager.GetTemperature(place);
             }
 
-            return View(result);
+            return View(info);
         }
     }
 }
